@@ -1,4 +1,4 @@
-import { createChallenge, deriveHmacKeySecret, verifySolution } from "altcha-lib";
+import { createChallenge, verifySolution } from "altcha-lib";
 import { deriveKey } from "altcha-lib/algorithms/web/pbkdf2";
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8" };
@@ -36,7 +36,6 @@ export default {
 
 async function issueChallenge(env, cors) {
   requireSecret(env);
-  const hmacKeySecret = await deriveHmacKeySecret(env.ALTCHA_HMAC_SECRET);
   const challenge = await createChallenge({
     algorithm: "PBKDF2/SHA-256",
     cost: 5000,
@@ -44,7 +43,6 @@ async function issueChallenge(env, cors) {
     deriveKey,
     expiresAt: new Date(Date.now() + 10 * 60 * 1000),
     hmacSignatureSecret: env.ALTCHA_HMAC_SECRET,
-    hmacKeySignatureSecret: hmacKeySecret,
     data: { purpose: "seo-audit" }
   });
   return json(challenge, 200, { ...cors, "cache-control": "no-store" });
@@ -97,13 +95,11 @@ async function verifyAltchaPayload(encoded, env) {
   try {
     const decoded = decodeBase64Json(encoded);
     if (!decoded?.challenge || !decoded?.solution) return false;
-    const hmacKeySecret = await deriveHmacKeySecret(env.ALTCHA_HMAC_SECRET);
     const result = await verifySolution({
       challenge: decoded.challenge,
       solution: decoded.solution,
       deriveKey,
       hmacSignatureSecret: env.ALTCHA_HMAC_SECRET,
-      hmacKeySignatureSecret: hmacKeySecret
     });
     return result?.verified === true && result?.expired !== true;
   } catch (error) {
