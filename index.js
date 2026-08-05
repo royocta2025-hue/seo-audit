@@ -39,7 +39,6 @@ async function issueChallenge(env, cors) {
   const challenge = await createChallenge({
     algorithm: "PBKDF2/SHA-256",
     cost: 5000,
-    counter: randomInt(5000, 10000),
     deriveKey,
     expiresAt: new Date(Date.now() + 10 * 60 * 1000),
     hmacSignatureSecret: env.ALTCHA_HMAC_SECRET,
@@ -206,15 +205,6 @@ function decodeBase64Json(value) {
   const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
   const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
   return JSON.parse(atob(padded));
-}
-
-function randomInt(min, max) {
-  const range = max - min + 1;
-  const maxUint = 0xffffffff;
-  const limit = maxUint - (maxUint % range);
-  const buf = new Uint32Array(1);
-  do { crypto.getRandomValues(buf); } while (buf[0] >= limit);
-  return min + (buf[0] % range);
 }
 
 function corsHeaders(origin, env) {
