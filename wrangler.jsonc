@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "seo-audit-api",
-  "main": "src/index.js",
+  "main": "/index.js",
   "compatibility_date": "2026-08-05",
   "workers_dev": true,
   "observability": { "enabled": true },
