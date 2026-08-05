@@ -1,0 +1,17 @@
+{
+  "name": "bible-infographic-seo-audit-worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "wrangler deploy --dry-run"
+  },
+  "dependencies": {
+    "altcha-lib": "^2.3.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.36.0"
+  }
+}
